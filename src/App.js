@@ -1,26 +1,46 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import TrelloList from "./components/TrelloList";
+import TrelloActionButton from "./components/TrelloActionButton";
+import { connect } from "react-redux";
+import { makeStyles } from "@material-ui/core/styles";
+import { DragDropContext } from "react-beautiful-dnd";
 
-function App() {
+const useStyles = makeStyles({
+  listsContainer: {
+    display: "flex",
+    flexDirection: "row"
+  }
+});
+
+function App(props) {
+  const classes = useStyles();
+  const { lists } = props;
+  const onDragEnd = () => {};
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div className="App">
+        <h1>Hello World</h1>
+        <div className={classes.listsContainer}>
+          {lists.map(list => (
+            <TrelloList
+              listID={list.id}
+              key={list.id}
+              title={list.title}
+              cards={list.cards}
+            />
+          ))}
+          <TrelloActionButton list />
+        </div>
+      </div>
+    </DragDropContext>
   );
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    lists: state.lists
+  };
+};
+
+export default connect(mapStateToProps)(App);
